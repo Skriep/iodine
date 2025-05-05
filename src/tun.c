@@ -89,9 +89,9 @@ open_tun(const char *tun_device)
 	int i;
 	int tun_fd;
 	struct ifreq ifreq;
-#ifdef ANDROID
+#if defined(ANDROID)
 	char *tunnel = "/dev/tun";
-#elsif defined(_GNU_SOURCE)
+#elif defined(_GNU_SOURCE)
 	char tunnel[IFNAMSIZ];
 	snprintf(tunnel, IFNAMSIZ, "/tmp/tun.%d%d", rand(), rand());
 	if (mknod(tunnel, S_IFCHR | 0644, makedev(10, 200)) < 0) {
