@@ -91,15 +91,17 @@ open_tun(const char *tun_device)
 	struct ifreq ifreq;
 #ifdef ANDROID
 	char *tunnel = "/dev/tun";
-#elif defined _GNU_SOURCE
-	char tunnel[IFNAMSIZ];
-	snprintf(tunnel, IFNAMSIZ, "/tmp/tun.%d%d", rand(), rand());
-	if (mknod(tunnel, S_IFCHR | 0644, makedev(10, 200)) < 0) {
-		warn("open_tun: %s", tunnel);
-		return -1;
-	}
 #else
-	char *tunnel = "/dev/net/tun";
+	#ifdef _GNU_SOURCE
+		char tunnel[IFNAMSIZ];
+		snprintf(tunnel, IFNAMSIZ, "/tmp/tun.%d%d", rand(), rand());
+		if (mknod(tunnel, S_IFCHR | 0644, makedev(10, 200)) < 0) {
+			warn("open_tun: %s", tunnel);
+			return -1;
+		}
+	#else
+		char *tunnel = "/dev/net/tun";
+	#endif
 #endif
 
 	if ((tun_fd = open(tunnel, O_RDWR)) < 0) {
